@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; background: #f3f4f6; }
+        .container { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; }
+        h1 { text-align: center; color: #4CAF50; }
+        input { width: 70%; padding: 10px; margin-bottom: 10px; border: 2px solid #4CAF50; border-radius: 5px; }
+        button { padding: 10px 20px; background: #4CAF50; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { background: #e8f5e9; padding: 10px; margin-top: 5px; display: flex; justify-content: space-between; border-radius: 5px; }
+        .delete-btn { background: #f44336; color: #fff; border: none; border-radius: 5px; cursor: pointer; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Add a new task...">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTasks);
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskList = document.getElementById('taskList');
+            const task = taskInput.value.trim();
+
+            if (task === '') return;
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${task}
+                <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+            `;
+            taskList.appendChild(li);
+
+            saveTasks();
+            taskInput.value = '';
+        }
+
+        function deleteTask(button) {
+            const li = button.parentElement;
+            li.remove();
+            saveTasks();
+        }
+
+        function saveTasks() {
+            const taskList = document.getElementById('taskList');
+            const tasks = [];
+            taskList.querySelectorAll('li').forEach(li => tasks.push(li.textContent.replace('Delete', '').trim()));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const taskList = document.getElementById('taskList');
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${task}
+                    <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
+
